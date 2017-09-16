@@ -64,9 +64,9 @@ def findHitler():
         print('Site Directly Links To Hitler!')
         return
     print('Checking Second Level...')
-    #newList = Pool(processes=4).map(goThroughEachLinkInList, myList)
+    #newList = Pool(processes=len(myList)).map(goThroughEachLinkInList, myList)
     #newList = ThreadPool(2).imap(goThroughEachLinkInList, myList) This is throwing an error
-    #newList = goThroughEachLinkInList(myList) #This works but very slow
+    newList = goThroughEachLinkInList(myList) #This works but very slow
     if isHitlerInList(newList):
         print('Site Directly Links To Hitler!')
         return
