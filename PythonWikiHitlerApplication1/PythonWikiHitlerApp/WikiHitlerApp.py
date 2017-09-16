@@ -19,6 +19,7 @@ def getWikiPageLinks(webpageURL):
     for link in body.find_all('a', href=True):
         hrefLink = link.get('href')
         if hrefLink.startswith(wikiLink):
+            hrefLink = urllib.parse.urljoin('https://en.wikipedia.org', hrefLink)
             linkList.append(hrefLink)
     return list(set(linkList))
 
@@ -39,10 +40,9 @@ def getWikiPageLinks(webpageURL):
 def goThroughEachLinkInList(linkList):
     levelTwoList = []
     for link in sorted(linkList, key=str.lower):
-        fullLink = urllib.parse.urljoin('https://en.wikipedia.org', link)
-        pageLinks = getWikiPageLinks(fullLink)
+        pageLinks = getWikiPageLinks(link)
+        print(link)
         levelTwoList.append(pageLinks)
-        print(fullLink)
         if isHitlerInList(pageLinks):
             return levelTwoList
     return levelTwoList
@@ -64,7 +64,7 @@ def findHitler():
         print('Site Directly Links To Hitler!')
         return
     print('Checking Second Level...')
-    #newList = Pool(processes=len(myList)).map(goThroughEachLinkInList, myList)
+    #newList = Pool(processes=4).map(goThroughEachLinkInList, myList)
     #newList = ThreadPool(2).imap(goThroughEachLinkInList, myList) This is throwing an error
     newList = goThroughEachLinkInList(myList) #This works but very slow
     if isHitlerInList(newList):
