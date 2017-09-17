@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import urllib.parse
-from multiprocessing import Pool
+import threading
 
 hitlerLink = '/wiki/Adolf_Hitler'
 wikiLink = '/wiki/'
@@ -19,7 +19,8 @@ def getWikiPageLinks(webpageURL):
     for link in body.find_all('a', href=True):
         hrefLink = link.get('href')
         if hrefLink.startswith(wikiLink):
-            linkList.append(hrefLink)
+            fullLink = urllib.parse.urljoin('https://en.wikipedia.org', hrefLink)
+            linkList.append(fullLink)
     return list(set(linkList))
 
 #Testing around with grequesets
@@ -39,10 +40,9 @@ def getWikiPageLinks(webpageURL):
 def goThroughEachLinkInList(linkList):
     levelTwoList = []
     for link in sorted(linkList, key=str.lower):
-        fullLink = urllib.parse.urljoin('https://en.wikipedia.org', link)
-        pageLinks = getWikiPageLinks(fullLink)
+        pageLinks = getWikiPageLinks(link)
         levelTwoList.append(pageLinks)
-        print(fullLink)
+        print(link)
         if isHitlerInList(pageLinks):
             return levelTwoList
     return levelTwoList
@@ -67,7 +67,12 @@ def findHitler():
     #newList = Pool(processes=4).map(goThroughEachLinkInList, myList)
     #newList = ThreadPool(2).imap(goThroughEachLinkInList, myList) This is throwing an error
     newList = goThroughEachLinkInList(myList) #This works but very slow
-    if isHitlerInList(newList):
+    """threads = [threading.Thread(target=goThroughEachLinkInList, args=(url,)) for url in myList]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()"""
+    if isHitlerInList(threads):
         print('Site Directly Links To Hitler!')
         return
     else:
