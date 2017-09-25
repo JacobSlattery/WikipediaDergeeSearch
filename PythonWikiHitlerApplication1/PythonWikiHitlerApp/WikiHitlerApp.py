@@ -13,9 +13,9 @@ def getWikiPageLinks(webpageURL):
     linkList = []
     page = requests.get(webpageURL)
     soup = BeautifulSoup(page.content, 'html.parser')
-    body = soup.find('body')
-    for div in soup.find_all('div', {'class':'reflist columns references-column-width'}): 
+    for div in soup.find_all('div', {'class' : 'reflist columns references-column-width'}): 
         div.decompose()
+    body = soup.find('div', { "class" : "mw-body" })
     for link in body.find_all('a', href=True):
         hrefLink = link.get('href')
         if hrefLink.startswith('/wiki/'):
